@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
@@ -19,6 +19,13 @@ class Avatar extends Model
         'name', 'image_url', 'thumbnail_url', 'active',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+        ];
+    }
+
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
@@ -29,21 +36,17 @@ class Avatar extends Model
         return $this->hasMany(Player::class);
     }
 
-    protected function thumbnailUrl(): Attribute
+    public function getImageFullUrlAttribute(): ?string
     {
-        return Attribute::make(
-            get: fn (?string $value) => $value !== null
-            ? asset('storage/' . ltrim($value, '/'))
-            : null,
-        );
+        return $this->image_url
+            ? Storage::disk('public')->url($this->image_url)
+            : null;
     }
-
-    protected function imageUrl(): Attribute
+    
+    public function getThumbnailFullUrlAttribute(): ?string
     {
-        return Attribute::make(
-            get: fn (?string $value) => $value !== null
-            ? asset('storage/' . ltrim($value, '/'))
-            : null,
-        );
+        return $this->thumbnail_url
+            ? Storage::disk('public')->url($this->thumbnail_url)
+            : null;
     }
 }

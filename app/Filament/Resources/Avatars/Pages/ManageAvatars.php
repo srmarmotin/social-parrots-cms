@@ -15,7 +15,8 @@ class ManageAvatars extends ManageRecords
     {
         return [
             CreateAction::make()
-                ->modalWidth(Width::Small),
+                ->modalWidth(Width::Small)
+                ->createAnother(false)
         ];
     }
 }

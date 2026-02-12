@@ -19,6 +19,7 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -38,10 +39,20 @@ class AvatarResource extends Resource
             ->components([
                 TextInput::make('name')
                     ->label('Name')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
                 FileUpload::make('image_url')
                     ->label('Image')
-                    ->image(),
+                    ->image()
+                    ->disk('public')
+                    ->directory('avatars')
+                    ->imageEditor()
+                    ->maxSize(2048) // 2MB max
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->imageResizeMode('cover')
+                    ->imageCropAspectRatio('1:1')
+                    ->imageResizeTargetWidth('500')
+                    ->imageResizeTargetHeight('500'),
                 Toggle::make('active')
                     ->label('Active')
                     ->required(),
@@ -51,18 +62,15 @@ class AvatarResource extends Resource
     public static function infolist(Schema $schema): Schema
     {
         return $schema
+            ->columns(1) 
             ->components([
                 TextEntry::make('name'),
                 ImageEntry::make('image_url')
-                    ->placeholder('-'),
-                TextEntry::make('thumbnail_url')
+                    ->disk('public')
                     ->placeholder('-'),
                 IconEntry::make('active')
                     ->boolean(),
                 TextEntry::make('created_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('updated_at')
                     ->dateTime()
                     ->placeholder('-'),
             ]);
@@ -75,10 +83,11 @@ class AvatarResource extends Resource
                 TextColumn::make('name')
                     ->searchable(),
                 ImageColumn::make('image_url')
+                    ->disk('public')
                     ->label('Image'),
-                TextColumn::make('thumbnail_url')
-                    ->label('Thumbnail')
-                    ->searchable(),
+                ImageColumn::make('thumbnail_url')
+                    ->disk('public')
+                    ->label('Thumbnail'),
                 IconColumn::make('active')
                     ->boolean(),
                 TextColumn::make('created_at')
@@ -94,7 +103,8 @@ class AvatarResource extends Resource
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalWidth(Width::Small),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
