@@ -19,6 +19,10 @@ class Avatar extends Model
         'name', 'image_url', 'thumbnail_url', 'active',
     ];
 
+    protected $appends = [
+        'image_full_url', 'thumbnail_full_url',
+    ];
+
     protected function casts(): array
     {
         return [

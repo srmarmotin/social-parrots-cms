@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AvatarResource;
 use App\Models\Avatar;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class AvatarController extends Controller
 {
-    public function active(): JsonResponse
+    public function active(): AnonymousResourceCollection
     {
         $avatars = Avatar::where('active', true)->get();
 
-        return response()->json($avatars);
+        return AvatarResource::collection($avatars);
     }
 }
