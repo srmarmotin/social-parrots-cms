@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasImageUrls;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Category extends Model
 {
+    use HasImageUrls;
+
     protected $fillable = [
         'name', 'image_url', 'thumbnail_url', 'active',
     ];
@@ -28,17 +31,4 @@ class Category extends Model
         ];
     }
 
-    public function getImageFullUrlAttribute(): ?string
-    {
-        return $this->image_url
-            ? Storage::disk('public')->url($this->image_url)
-            : null;
-    }
-
-    public function getThumbnailFullUrlAttribute(): ?string
-    {
-        return $this->thumbnail_url
-            ? Storage::disk('public')->url($this->thumbnail_url)
-            : null;
-    } 
 }

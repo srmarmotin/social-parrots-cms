@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('image_url')->nullable();
             $table->string('thumbnail_url')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }
